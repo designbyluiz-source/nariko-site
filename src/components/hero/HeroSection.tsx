@@ -10,12 +10,12 @@ export function HeroSection() {
   const [parallaxOffset, setParallaxOffset] = useState({ x: 0, y: 0 })
 
   const leftSlides = useMemo(
-    () => heroSlidePairs.map((pair) => ({ src: pair.esquerda, alt: `Hero slide ${pair.n} — imagem esquerda` })),
+    () => heroSlidePairs.map((pair) => ({ src: pair.direita, alt: `Hero slide ${pair.n} — imagem esquerda` })),
     [],
   )
 
   const rightSlides = useMemo(
-    () => heroSlidePairs.map((pair) => ({ src: pair.direita, alt: `Hero slide ${pair.n} — imagem direita` })),
+    () => heroSlidePairs.map((pair) => ({ src: pair.esquerda, alt: `Hero slide ${pair.n} — imagem direita` })),
     [],
   )
 

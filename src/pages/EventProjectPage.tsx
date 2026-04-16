@@ -20,7 +20,7 @@ const projects: Record<
       'Pagina dedicada ao projeto. Conteudo final sera adicionado aqui com fotos, depoimentos e detalhes do evento.',
   },
   'workshop-masterclass': {
-    title: 'Workshop MasterClass',
+    title: 'Ita Beauty 2025',
     description:
       'Pagina dedicada ao projeto. Conteudo final sera adicionado aqui com fotos, depoimentos e detalhes do evento.',
   },
