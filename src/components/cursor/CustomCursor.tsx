@@ -3,7 +3,6 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 
 type CursorVariant = 'light' | 'dark'
 
-const IDLE_MS = 10_000
 const PARTICLE_SPAWN_MS = 420
 const PARTICLES_MIN = 5 /** mínimo > 4 conforme pedido */
 
@@ -146,7 +145,6 @@ export function CustomCursor() {
   const [variant, setVariant] = useState<CursorVariant>('dark')
   const [visible, setVisible] = useState(false)
   const [position, setPosition] = useState({ x: 0, y: 0 })
-  const [isIdle, setIsIdle] = useState(false)
   const [particles, setParticles] = useState<FallingDot[]>([])
 
   const frameRef = useRef<number | null>(null)
@@ -154,8 +152,6 @@ export function CustomCursor() {
   const lastPositionRef = useRef<{ x: number; y: number }>({ x: -1, y: -1 })
   const lastVariantRef = useRef<CursorVariant>('dark')
   const positionRef = useRef(position)
-  const lastMoveTimeRef = useRef(0)
-
   const hotspot = useMemo(() => ({ x: 20, y: 4 }), [])
 
   useEffect(() => {
@@ -163,23 +159,7 @@ export function CustomCursor() {
   }, [position])
 
   useEffect(() => {
-    if (!enabled || !idleEffectsEnabled) return
-
-    const tick = () => {
-      const last = lastMoveTimeRef.current
-      if (last === 0) {
-        setIsIdle(false)
-        return
-      }
-      setIsIdle(performance.now() - last > IDLE_MS)
-    }
-
-    const id = window.setInterval(tick, 200)
-    return () => window.clearInterval(id)
-  }, [enabled, idleEffectsEnabled])
-
-  useEffect(() => {
-    if (!enabled || !idleEffectsEnabled || !isIdle || !visible) return
+    if (!enabled || !idleEffectsEnabled || !visible) return
 
     const spawn = () => {
       const { x, y } = positionRef.current
@@ -208,7 +188,7 @@ export function CustomCursor() {
     spawn()
     const intervalId = window.setInterval(spawn, PARTICLE_SPAWN_MS)
     return () => window.clearInterval(intervalId)
-  }, [enabled, idleEffectsEnabled, isIdle, visible])
+  }, [enabled, idleEffectsEnabled, visible])
 
   useEffect(() => {
     if (!enabled) return
@@ -255,8 +235,6 @@ export function CustomCursor() {
     }
 
     const handleMove = (event: MouseEvent) => {
-      lastMoveTimeRef.current = performance.now()
-      setIsIdle(false)
       setVisible(true)
       schedule(event.clientX, event.clientY)
     }
@@ -264,7 +242,6 @@ export function CustomCursor() {
     const handleLeaveWindow = () => {
       setVisible(false)
       setParticles([])
-      setIsIdle(false)
     }
 
     window.addEventListener('mousemove', handleMove, { passive: true })
@@ -286,7 +263,7 @@ export function CustomCursor() {
 
   const dotColor = variant === 'light' ? 'var(--color-accent)' : '#ffffff'
 
-  const showIdleMotion = idleEffectsEnabled && isIdle && visible
+  const showIdleMotion = idleEffectsEnabled && visible
 
   const removeParticle = (id: string) => {
     setParticles((prev) => prev.filter((p) => p.id !== id))
